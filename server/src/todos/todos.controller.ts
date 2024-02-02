@@ -9,9 +9,9 @@ import { UpdateTodoStatusDto } from './dto/update-todo-status.dto';
 export class TodosController {
   constructor(private todosService: TodosService) {}
 
-  @Get()
-  async getTodos(): Promise<Todo[]> {
-    return this.todosService.findAll();
+  @Get("/:board_id")
+  async getTodos(@Param("board_id") board_id: string): Promise<Todo[]> {
+    return this.todosService.findAll(board_id);
   }
 
   @Post()

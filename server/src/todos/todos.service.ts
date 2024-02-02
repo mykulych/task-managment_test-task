@@ -10,12 +10,17 @@ export class TodosService {
     private todoModel: mongoose.Model<Todo>
   ) {}
 
-  async findAll(): Promise<Todo[]> {
-    const todos = await this.todoModel.find();
+  async findAll(board_id: string): Promise<Todo[]> {
+    const todos = await this.todoModel.find({ board_id });
     return todos;
   }
 
   async create(todo: Todo): Promise<Todo> {
+    const isValidBoardId = mongoose.isValidObjectId(todo.board_id);
+    if (!isValidBoardId) {
+      throw new BadRequestException('Invalid Board ID');
+    }
+    
     const res = await this.todoModel.create({...todo, status: TodoStatus.TODO});
     return res;
   }

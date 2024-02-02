@@ -1,8 +1,7 @@
-import { Injectable, ExceptionFilter, BadRequestException } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Board } from './schemas/board.schema';
-import mongoose from 'mongoose';
-import { BaseExceptionFilter } from '@nestjs/core';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class BoardsService {

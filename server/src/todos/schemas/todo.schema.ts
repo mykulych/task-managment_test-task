@@ -12,6 +12,9 @@ export enum TodoStatus {
 export class Todo {
 
   @Prop()
+  board_id?: string;
+  
+  @Prop()
   title: string;
 
   @Prop()
