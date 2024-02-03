@@ -17,7 +17,6 @@ export class BoardsService {
 
   async create(board: Board): Promise<Board> {
     const exists = await this.boardModel.exists({ name: board.name });
-
     if (exists) {
       throw new BadRequestException('Board already exists');
     }
@@ -30,6 +29,11 @@ export class BoardsService {
     const isValidId = mongoose.isValidObjectId(id);
     if (!isValidId) {
       throw new BadRequestException('Invalid ID');
+    }
+
+    const exists = await this.boardModel.exists({ name: board.name });
+    if (exists) {
+      throw new BadRequestException('Board already exists');
     }
     
     return await this.boardModel.findByIdAndUpdate(id, board, {
