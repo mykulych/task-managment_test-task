@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Todo, TodoStatus } from './schemas/todo.schema';
+import { StructuredTodos, Todo, TodoStatus } from './schemas/todo.schema';
 import * as mongoose from 'mongoose';
 
 @Injectable()
@@ -10,9 +10,15 @@ export class TodosService {
     private todoModel: mongoose.Model<Todo>
   ) {}
 
-  async findAll(board_id: string): Promise<Todo[]> {
+  async findAll(board_id: string): Promise<StructuredTodos> {
     const todos = await this.todoModel.find({ board_id });
-    return todos;
+    const structuredTodos = {
+      [TodoStatus.TODO]: [],
+      [TodoStatus.IN_PROGRESS]: [],
+      [TodoStatus.DONE]: []
+    };
+    todos.forEach(todo => structuredTodos[todo.status].push(todo) )
+    return structuredTodos;
   }
 
   async create(todo: Todo): Promise<Todo> {

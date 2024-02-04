@@ -6,6 +6,12 @@ export enum TodoStatus {
   DONE = 'DONE',
 }
 
+export interface StructuredTodos {
+  [TodoStatus.TODO]: Todo[];
+  [TodoStatus.IN_PROGRESS]: Todo[];
+  [TodoStatus.DONE]: Todo[];
+}
+
 @Schema({
   timestamps: true,
 })

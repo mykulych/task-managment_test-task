@@ -1,6 +1,7 @@
+
 import { Body, Controller, Delete, Get, Param, Patch, Post, Put } from '@nestjs/common';
 import { TodosService } from './todos.service';
-import { Todo, TodoStatus } from './schemas/todo.schema';
+import { StructuredTodos, Todo, TodoStatus } from './schemas/todo.schema';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { UpdateTodoStatusDto } from './dto/update-todo-status.dto';
@@ -10,7 +11,7 @@ export class TodosController {
   constructor(private todosService: TodosService) {}
 
   @Get("/:board_id")
-  async getTodos(@Param("board_id") board_id: string): Promise<Todo[]> {
+  async getTodos(@Param("board_id") board_id: string): Promise<StructuredTodos> {
     return this.todosService.findAll(board_id);
   }
 
