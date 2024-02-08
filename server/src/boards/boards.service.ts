@@ -10,6 +10,16 @@ export class BoardsService {
     private boardModel: mongoose.Model<Board>
   ) {}
 
+  async findById(id: string): Promise<Board> {
+    const isValidId = mongoose.isValidObjectId(id);
+    if (!isValidId) {
+      throw new BadRequestException('Invalid ID');
+    }
+
+    const board = await this.boardModel.findById(id);
+    return board;
+  }
+
   async findAll(): Promise<Board[]> {
     const boards = await this.boardModel.find();
     return boards;

@@ -7,6 +7,13 @@ import { CreateBoardDto } from './dto/create-board.dto';
 export class BoardsController {
   constructor(private boardsService: BoardsService) {}
 
+  @Get("/:id")
+  async getBoardById(
+    @Param("id") id: string
+  ): Promise<Board> {
+    return this.boardsService.findById(id);
+  }
+
   @Get()
   async getBoards(): Promise<Board[]> {
     return this.boardsService.findAll();
