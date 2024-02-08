@@ -22,7 +22,7 @@ export const CreateBoardModal: React.FC<Props> = ({ isOpen, onClose }) => {
   }
   
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Create new board</ModalHeader>

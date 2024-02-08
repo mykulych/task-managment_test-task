@@ -23,7 +23,7 @@ export const UpdateBoardModal: React.FC<Props> = ({ isOpen, onClose, selectedBoa
   }
   
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Update board</ModalHeader>

@@ -3,6 +3,9 @@ import { api } from "./api";
 
 export const boardApi = api.injectEndpoints({
   endpoints: (build) => ({
+    getBoardById: build.query<Board, string | undefined>({
+      query: (id) => `boards/${id}`,
+    }),
     getBoards: build.query<Board[], void>({
       query: () => "boards",
       providesTags: ["Board"]
@@ -33,4 +36,4 @@ export const boardApi = api.injectEndpoints({
   })
 });
 
-export const { useGetBoardsQuery, useCreateBoardMutation, useUpdateBoardMutation, useRemoveBoardMutation } = boardApi;
+export const { useGetBoardByIdQuery, useGetBoardsQuery, useCreateBoardMutation, useUpdateBoardMutation, useRemoveBoardMutation } = boardApi;

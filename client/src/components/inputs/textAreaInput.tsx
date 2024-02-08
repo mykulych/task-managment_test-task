@@ -1,4 +1,4 @@
-import { Box, Input, Text } from "@chakra-ui/react";
+import { Box, Input, Text, Textarea } from "@chakra-ui/react";
 import React from "react";
 import { UseFormRegister } from "react-hook-form";
 
@@ -9,11 +9,11 @@ interface Props {
   label?: string;
 }
 
-export const TextInput: React.FC<Props> = ({ id, register, placeholder, label }) => {
+export const TextAreaInput: React.FC<Props> = ({ id, register, placeholder, label }) => {
   return (
     <Box>
       <Text mb="8px">{label}</Text>
-      <Input type="text" {...register(id)} placeholder={placeholder} />
+      <Textarea {...register(id)} placeholder={placeholder} />
     </Box>
   )
 };

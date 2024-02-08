@@ -1,4 +1,4 @@
-import { StructuredTodos, Todo } from "../types/todo";
+import { StructuredTodos, Todo, TodoStatus } from "../types/todo";
 import { api } from "./api";
 
 interface TodoPayload {
@@ -29,13 +29,13 @@ export const todoApi = api.injectEndpoints({
       }),
       invalidatesTags: ["Todo"],
     }),
-    changeStatus: build.mutation<Todo, { id: string; status: string }>({
+    changeStatus: build.mutation<Todo, { id: string; status: TodoStatus }>({
       query: ({ id, status }) => ({
-        url: `todos/${id}/status`,
+        url: `todos/status/${id}`,
         method: "PATCH",
         body: { status },
       }),
-      invalidatesTags: ["Todo"],
+      invalidatesTags: (_, error) => error ? ["Todo"] : [],
     }),
     removeTodo: build.mutation<Todo, string>({
       query: (id) => ({

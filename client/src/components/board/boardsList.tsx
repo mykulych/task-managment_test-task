@@ -10,7 +10,11 @@ interface Props {
 }
 
 export const BoardsList: React.FC<Props> = ({ boards, ...props }) => {
-  return <VStack align="stretch" spacing={4}>
-    {boards.map((board) => <BoardCard key={board._id} board={board} {...props} />)}
-  </VStack>
-}
+  return (
+    <VStack align="stretch" spacing={6}>
+      {boards.map((board) => (
+        <BoardCard key={board._id} board={board} {...props} />
+      ))}
+    </VStack>
+  );
+};

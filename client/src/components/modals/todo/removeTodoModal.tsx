@@ -20,7 +20,7 @@ export const RemoveTodoModal: React.FC<Props> = ({ isOpen, onClose, selectedTodo
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Are you sure ?</ModalHeader>

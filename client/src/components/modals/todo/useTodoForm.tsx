@@ -1,6 +1,7 @@
-import { ModalCloseButton, ModalBody, ModalFooter, Button } from "@chakra-ui/react";
+import { ModalCloseButton, ModalBody, ModalFooter, Button, VStack, Flex } from "@chakra-ui/react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { TextInput } from "../../inputs/textInput";
+import { TextAreaInput } from "../../inputs/textAreaInput";
 
 export type FormValues = {
   title: string;
@@ -24,9 +25,11 @@ export const UseTodoForm: React.FC<Props> = ({ onSubmit, onClose, defaultData })
   return (
     <form onSubmit={handleSubmit(handler)}>
       <ModalCloseButton />
-      <ModalBody>
-        <TextInput id="title" register={register} label="Board name:" placeholder="Enter board name" />
-        <TextInput id="description" register={register} label="Board name:" placeholder="Enter board name" />
+      <ModalBody gap={5}>
+        <Flex flexDir="column" gap={8}>
+          <TextInput id="title" register={register} label="Board name:" placeholder="Enter board name" />
+          <TextAreaInput id="description" register={register} label="Board name:" placeholder="Enter board name" />
+        </Flex>
       </ModalBody>
 
       <ModalFooter>

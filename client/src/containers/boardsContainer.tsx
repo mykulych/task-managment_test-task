@@ -29,7 +29,7 @@ export const BoardsContainer: React.FC = () => {
       <CreateBoardModal {...createModal} />
       <UpdateBoardModal {...updateModal} selectedBoard={selectedBoard.current} />
       <RemoveBoardModal {...removeModal} selectedBoardId={selectedBoard.current._id} />
-      <Flex justifyContent="space-between" alignItems="center" py={5}>
+      <Flex justifyContent="space-between" alignItems="center" py={5} mb={10}>
         <Heading fontSize="2xl">Boards</Heading>
         <Button colorScheme="teal" onClick={createModal.onOpen}>
           Create new board

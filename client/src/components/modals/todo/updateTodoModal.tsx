@@ -29,10 +29,10 @@ export const UpdateTodoModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} isCentered>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Create new board</ModalHeader>
+        <ModalHeader>Update board</ModalHeader>
         <UseTodoForm
           onSubmit={handleUpdateTodo}
           onClose={onClose}
