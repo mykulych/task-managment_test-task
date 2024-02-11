@@ -8,17 +8,18 @@ interface Props {
   todos: StructuredTodos;
   onEdit: (data: Todo) => void;
   onRemove: (data: Todo) => void;
-  handleAddItemToColumn: (todo: Todo, status: TodoStatus) => void;
+  handleMoveCard: (dragIndex: number, hoverIndex: number, status: TodoStatus, todo: Todo) => void;
+  addCardToColumn: (todo: Todo, status: TodoStatus) => void;
 }
 
 interface ColumnProps {
   name: string;
   colId: TodoStatus;
   children: ReactNode;
-  addItemToColumn: (todo: Todo) => void;
+  handleDrop: (todo: Todo) => void;
 }
 
-export const TodosList: React.FC<Props> = ({ todos, handleAddItemToColumn, ...props }) => {
+export const TodosList: React.FC<Props> = ({ todos, handleMoveCard, addCardToColumn, ...props }) => {
   const statuses = [TodoStatus.TODO, TodoStatus.IN_PROGRESS, TodoStatus.DONE]
 
   return (
@@ -27,10 +28,18 @@ export const TodosList: React.FC<Props> = ({ todos, handleAddItemToColumn, ...pr
         <Column
           name={status}
           colId={status}
-          addItemToColumn={(item: Todo) => handleAddItemToColumn(item, status)}
+          handleDrop={(item) => addCardToColumn(item, status)}
         >
-          {todos[status].map((todo) => (
-            <TodoCard todo={todo} {...props} />
+          {todos[status].map((todo, index) => (
+            <TodoCard
+              todo={todo}
+              index={index}
+              {...props}
+              column={status}
+              moveCard={(dragIndex, hoverIndex, item) => {
+                handleMoveCard(dragIndex, hoverIndex, status, item);
+              }}
+            />
           ))}
         </Column>
       ))}
@@ -38,20 +47,31 @@ export const TodosList: React.FC<Props> = ({ todos, handleAddItemToColumn, ...pr
   );
 }
 
-const Column: React.FC<ColumnProps> = ({ name, addItemToColumn, children }) => {
-  const [{isOver}, drop] = useDrop({
+const Column: React.FC<ColumnProps> = ({ name, handleDrop, children }) => {
+  const childrenLength = React.Children.count(children);
+  const [{ isOver }, drop] = useDrop({
     accept: "todo",
-    drop: (item: Todo) => addItemToColumn(item),
+    drop: (item: Todo) => handleDrop(item),
     collect: (monitor) => ({
-      isOver: !!monitor.isOver()
-    })
+      isOver: !!monitor.isOver(),
+    }),
   });
-  
-  return <Box w="33.3%" ref={drop}>
-    <Text textAlign="center" fontSize="xl" fontWeight="700" mb={4}>{name}</Text>
-    <Box visibility={isOver ? "visible" : "hidden"} w="100%" h="4px" bg="#707070" mb={30}></Box>
-    <Flex flexDir="column" gap={4}>
-      {children}
-    </Flex>
-  </Box>
+
+  return (
+    <Box w="33.3%" ref={!childrenLength ? drop : null}>
+      <Text textAlign="center" fontSize="xl" fontWeight="700" mb={4}>
+        {name}
+      </Text>
+      <Box
+        visibility={isOver ? "visible" : "hidden"}
+        w="100%"
+        h="4px"
+        bg="#707070"
+        mb={30}
+      ></Box>
+      <Flex flexDir="column" gap={4}>
+        {children}
+      </Flex>
+    </Box>
+  );
 };
