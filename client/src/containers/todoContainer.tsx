@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { useChangeStatusMutation, useGetTodosQuery } from "../features/todo.api";
+import { useChangeStatusMutation, useGetTodosQuery, useUpdateOrderMutation } from "../features/todo.api";
 import { TodosList } from "../components/todo/todosList";
 import { Button, Flex, Heading, Text, chakra, useDisclosure, useToast } from "@chakra-ui/react";
 import { StructuredTodos, Todo, TodoStatus } from "../types/todo";
@@ -19,6 +19,7 @@ export const TodoContainer: React.FC = () => {
   const { data: board } = useGetBoardByIdQuery(boardId, { skip: !boardId });
   const { data, isFetching } = useGetTodosQuery(boardId, { skip: !boardId });
   const [changeStatus] = useChangeStatusMutation();
+  const [updateOrder] = useUpdateOrderMutation();
   const [todos, setTodos] = useState<StructuredTodos>(data || {[TodoStatus.TODO]: [], [TodoStatus.IN_PROGRESS]: [], [TodoStatus.DONE]: []})
   const createModal = useDisclosure();
   const updateModal = useDisclosure();
@@ -34,61 +35,89 @@ export const TodoContainer: React.FC = () => {
 
   const addCardToColumn = (todo: Todo, newStatus: TodoStatus) => {
     if (todo.status === newStatus) return;
-    
-    setTodos(prev => {
-      const newTodos = { ...prev, [newStatus]: [...prev[newStatus], {...todo, status: newStatus}] };
-      const filteredStatus = newTodos[todo.status].filter((t) => t._id !== todo._id);
-      newTodos[todo.status] = filteredStatus;
-      return newTodos;
-    });
 
-    changeStatus({ id: todo._id, status: newStatus })
-      .unwrap()
-      .catch((err) => {
-        if (data) {
-          setTodos(data)
-        }
-        errToast({ title: err?.data?.message || "An error occurred" })
-      })
+    const prev = { ...todos };
+    
+    const newTodos = { ...prev, [newStatus]: [...prev[newStatus], {...todo, status: newStatus}] };
+    const filteredStatus = newTodos[todo.status].filter((t) => t._id !== todo._id);
+    newTodos[todo.status] = filteredStatus;
+    
+    setTodos(newTodos);
+
+    changeStatusHandler(todo._id, newStatus);
+
+    const ids = getTodosId(newTodos);
+    updateOrderHandler(ids);
   };
 
   const handleMoveCard = (dragIndex: number, hoverIndex: number, newStatus: TodoStatus, todo: Todo) => {
     const sourceStatus = todo.status;
     const destinationStatus = newStatus;
 
-    setTodos(prev => {
-      const draggedItem ={ ...prev[sourceStatus][dragIndex], status: newStatus};
+    if (newStatus !== todo.status) {
+      changeStatusHandler(todo._id, newStatus);
+    }
 
-      // Remove the dragged item from the source column
-      const updatedSource = {
-        ...prev,
-        [sourceStatus]: [
-          ...prev[sourceStatus].slice(0, dragIndex),
-          ...prev[sourceStatus].slice(dragIndex + 1),
-        ],
-      };
+    const prev = { ...todos };
     
-      // Insert the dragged item at the specified position in the destination column
-      const updatedDestination = update(updatedSource, {
-        [destinationStatus]: { $splice: [[hoverIndex, 0, draggedItem]] },
-      });
-    
-      return updatedDestination;
+    const draggedItem ={ ...prev[sourceStatus][dragIndex], status: newStatus};
+
+    // Remove the dragged item from the source column
+    const updatedSource = {
+      ...prev,
+      [sourceStatus]: [
+        ...prev[sourceStatus].slice(0, dragIndex),
+        ...prev[sourceStatus].slice(dragIndex + 1),
+      ],
+    };
+  
+    // Insert the dragged item at the specified position in the destination column
+    const updatedDestination = update(updatedSource, {
+      [destinationStatus]: { $splice: [[hoverIndex, 0, draggedItem]] },
     });
+
+    setTodos(updatedDestination);
+
+    const ids = getTodosId(updatedDestination);
+    updateOrderHandler(ids);
   }
 
+  
   const onEdit = (data: Todo) => {
     selectedTodo.current = data;
     updateModal.onOpen();
   };
-
+  
   const onRemove = (data: Todo) => {
     selectedTodo.current = data;
     removeModal.onOpen();
   };
 
-  if (isFetching) return <div>Loading...</div>
 
+  const updateOrderHandler = (ids: string[]) =>
+    updateOrder({ ids })
+      .unwrap()
+      .catch((err) => {
+        if (data) {
+          setTodos(data);
+        }
+        errToast({ title: err?.data?.message || "An error occurred" });
+      });
+
+  const changeStatusHandler = (todoId: string, status: TodoStatus) =>
+    changeStatus({ id: todoId, status })
+      .unwrap()
+      .catch((err) => {
+        if (data) {
+          setTodos(data);
+        }
+        errToast({ title: err?.data?.message || "An error occurred" });
+      });
+  
+  const getTodosId = (todos: StructuredTodos) => Object.values(todos).map((t) => t.map((i: Todo) => i._id)).flat();
+  
+  if (isFetching) return <div>Loading...</div>
+  
   if (!data) return <div>No data</div>
 
   return (

@@ -37,6 +37,13 @@ export const todoApi = api.injectEndpoints({
       }),
       invalidatesTags: (_, error) => error ? ["Todo"] : [],
     }),
+    updateOrder: build.mutation<string[], { ids: string[] }>({
+      query: ({ ids }) => ({
+        url: "todos/order",
+        method: "PUT",
+        body: { ids },
+      }),
+    }),
     removeTodo: build.mutation<Todo, string>({
       query: (id) => ({
         url: `todos/${id}`,
@@ -52,5 +59,6 @@ export const {
   useCreateTodoMutation,
   useUpdateTodoMutation,
   useChangeStatusMutation,
+  useUpdateOrderMutation,
   useRemoveTodoMutation,
 } = todoApi;
