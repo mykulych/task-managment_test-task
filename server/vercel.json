@@ -9,7 +9,14 @@
   "routes": [
       {
           "src": "/(.*)",
-          "dest": "/main.ts"
+          "dest": "/main.ts",
+          "methods": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ]
       }
   ]
 }
