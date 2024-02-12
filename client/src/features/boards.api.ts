@@ -8,32 +8,38 @@ export const boardApi = api.injectEndpoints({
     }),
     getBoards: build.query<Board[], void>({
       query: () => "boards",
-      providesTags: ["Board"]
+      providesTags: ["Board"],
     }),
     createBoard: build.mutation<Board, Partial<Board>>({
       query: (body) => ({
         url: "boards",
         method: "POST",
-        body
+        body,
       }),
-      invalidatesTags: ["Board"]
+      invalidatesTags: ["Board"],
     }),
     updateBoard: build.mutation<Board, Partial<Board>>({
       query: (body) => ({
         url: `boards/${body._id}`,
         method: "PATCH",
-        body
+        body,
       }),
-      invalidatesTags: ["Board"]
+      invalidatesTags: ["Board"],
     }),
     removeBoard: build.mutation<Board, string>({
       query: (id) => ({
         url: `boards/${id}`,
-        method: "DELETE"
+        method: "DELETE",
       }),
-      invalidatesTags: ["Board"]
-    })
-  })
+      invalidatesTags: ["Board"],
+    }),
+  }),
 });
 
-export const { useGetBoardByIdQuery, useGetBoardsQuery, useCreateBoardMutation, useUpdateBoardMutation, useRemoveBoardMutation } = boardApi;
+export const {
+  useGetBoardByIdQuery,
+  useGetBoardsQuery,
+  useCreateBoardMutation,
+  useUpdateBoardMutation,
+  useRemoveBoardMutation,
+} = boardApi;

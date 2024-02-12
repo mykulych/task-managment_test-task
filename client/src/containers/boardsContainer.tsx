@@ -6,9 +6,11 @@ import { CreateBoardModal } from "../components/modals/board/createBoardModal";
 import { UpdateBoardModal } from "../components/modals/board/updateBoardModal";
 import { RemoveBoardModal } from "../components/modals/board/removeBoardModal";
 import { Board } from "../types/board";
+import { LoadingIndicator } from "../components/loadingIndicator";
+import { ErrorMessage } from "../components/errorMessage";
 
 export const BoardsContainer: React.FC = () => {
-  const { data = [] } = useGetBoardsQuery();
+  const { data = [], isFetching, isError } = useGetBoardsQuery();
   const createModal = useDisclosure();
   const updateModal = useDisclosure();
   const removeModal = useDisclosure();
@@ -23,6 +25,10 @@ export const BoardsContainer: React.FC = () => {
     selectedBoard.current = data;
     removeModal.onOpen();
   };
+
+  if (isFetching) return <LoadingIndicator />
+
+  if (isError) return <ErrorMessage message="Something went wrong, try again later!" />
 
   return (
     <>

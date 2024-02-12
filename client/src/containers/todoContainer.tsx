@@ -10,6 +10,8 @@ import { RemoveTodoModal } from "../components/modals/todo/removeTodoModal";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { useGetBoardByIdQuery } from "../features/boards.api";
 import update from "immutability-helper";
+import { ErrorMessage } from "../components/errorMessage";
+import { LoadingIndicator } from "../components/loadingIndicator";
 
 const CFaArrowLeft = chakra(FaArrowLeft);
 const CFaArrowRight = chakra(FaArrowRight);
@@ -17,7 +19,7 @@ const CFaArrowRight = chakra(FaArrowRight);
 export const TodoContainer: React.FC = () => {
   const {boardId} = useParams();
   const { data: board } = useGetBoardByIdQuery(boardId, { skip: !boardId });
-  const { data, isFetching } = useGetTodosQuery(boardId, { skip: !boardId });
+  const { data, isFetching, isError} = useGetTodosQuery(boardId, { skip: !boardId });
   const [changeStatus] = useChangeStatusMutation();
   const [updateOrder] = useUpdateOrderMutation();
   const [todos, setTodos] = useState<StructuredTodos>(data || {[TodoStatus.TODO]: [], [TodoStatus.IN_PROGRESS]: [], [TodoStatus.DONE]: []})
@@ -116,10 +118,10 @@ export const TodoContainer: React.FC = () => {
   
   const getTodosId = (todos: StructuredTodos) => Object.values(todos).map((t) => t.map((i: Todo) => i._id)).flat();
   
-  if (isFetching) return <div>Loading...</div>
-  
-  if (!data) return <div>No data</div>
+  if (isFetching) return <LoadingIndicator />
 
+  if (isError) return <ErrorMessage message="Something went wrong, try again lagter!" />
+  
   return (
     <>
       <CreateTodoModal {...createModal} />
