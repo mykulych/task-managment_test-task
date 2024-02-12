@@ -22,6 +22,9 @@ export class Todo {
 
   @Prop()
   status?: TodoStatus;
+
+  @Prop()
+  order_id?: number;
 }
 
 export interface StructuredTodos {

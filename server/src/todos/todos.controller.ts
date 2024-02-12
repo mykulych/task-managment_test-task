@@ -39,6 +39,14 @@ export class TodosController {
     return this.todosService.changeStatus(id, status);
   }
 
+  @Put("/order")
+  async updateTodoOrder(
+    @Body() {ids}: {ids: string[]}
+  ): Promise<{success: boolean}> {
+    this.todosService.updateOrder(ids);
+    return { success: true };
+  }
+
   @Delete("/:id")
   async deleteTodo(
     @Param("id") id: string

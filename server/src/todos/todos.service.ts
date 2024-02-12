@@ -11,7 +11,7 @@ export class TodosService {
   ) {}
 
   async findAll(board_id: string): Promise<StructuredTodos> {
-    const todos = await this.todoModel.find({ board_id });
+    const todos = await this.todoModel.find({ board_id }).sort({ order_id: 1 });
     const structuredTodos = {
       [TodoStatus.TODO]: [],
       [TodoStatus.IN_PROGRESS]: [],
@@ -26,8 +26,16 @@ export class TodosService {
     if (!isValidBoardId) {
       throw new BadRequestException('Invalid Board ID');
     }
+
+    const todoCount = await this.todoModel.countDocuments({ board_id: todo.board_id });
     
-    const res = await this.todoModel.create({...todo, status: TodoStatus.TODO});
+    const newTodo = {
+      ...todo,
+      status: TodoStatus.TODO,
+      order_id: todoCount + 1
+    }
+    
+    const res = await this.todoModel.create(newTodo);
     return res;
   }
 
@@ -54,7 +62,22 @@ export class TodosService {
       runValidators: true
     })
   }
-  
+
+  async updateOrder(ids: string[]): Promise<void> {
+    for (let i = 0; i < ids.length; i++) {
+      const id = ids[i];
+      const isValidId = mongoose.isValidObjectId(id);
+      if (!isValidId) {
+        throw new BadRequestException('Invalid ID');
+      }
+      
+      await this.todoModel.findByIdAndUpdate(id, {order_id: i + 1}, {
+        new: true,
+        runValidators: true
+      });
+    }
+  }
+
   async delete(id: string): Promise<Todo> {
     const isValidId = mongoose.isValidObjectId(id);
     if (!isValidId) {
