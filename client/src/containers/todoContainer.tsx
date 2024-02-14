@@ -19,14 +19,14 @@ const CFaArrowRight = chakra(FaArrowRight);
 export const TodoContainer: React.FC = () => {
   const {boardId} = useParams();
   const { data: board } = useGetBoardByIdQuery(boardId, { skip: !boardId });
-  const { data, isFetching, isError} = useGetTodosQuery(boardId, { skip: !boardId });
+  const { data, isFetching, isError} = useGetTodosQuery(boardId, { skip: !boardId, refetchOnMountOrArgChange: true });
   const [changeStatus] = useChangeStatusMutation();
   const [updateOrder] = useUpdateOrderMutation();
   const [todos, setTodos] = useState<StructuredTodos>(data || {[TodoStatus.TODO]: [], [TodoStatus.IN_PROGRESS]: [], [TodoStatus.DONE]: []})
   const createModal = useDisclosure();
   const updateModal = useDisclosure();
   const removeModal = useDisclosure();
-  const selectedTodo = useRef<Todo>({ _id: "", title: "", description: "", board_id: "", status: TodoStatus.TODO });
+  const selectedTodo = useRef<Todo | null>(null);
   const errToast = useToast({ status: "error" });
 
   useEffect(() => {
@@ -128,7 +128,7 @@ export const TodoContainer: React.FC = () => {
       <UpdateTodoModal {...updateModal} selectedTodo={selectedTodo.current} />
       <RemoveTodoModal
         {...removeModal}
-        selectedTodoId={selectedTodo.current._id}
+        selectedTodoId={selectedTodo.current?._id || null}
       />
       <Link to="/">
         <Flex alignItems="center" gap={2}>

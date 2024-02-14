@@ -4,7 +4,7 @@ import { useRemoveTodoMutation } from '../../../features/todo.api';
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  selectedTodoId: string;
+  selectedTodoId: string | null;
 }
 
 export const RemoveTodoModal: React.FC<Props> = ({ isOpen, onClose, selectedTodoId }) => {
@@ -12,6 +12,8 @@ export const RemoveTodoModal: React.FC<Props> = ({ isOpen, onClose, selectedTodo
   const toast = useToast();
 
   const handleRemoveTodo = () => {
+    if (!selectedTodoId) return;
+    
     removeTodo(selectedTodoId)
       .unwrap()
       .then(() => toast({ title: "Todo removed successfully!", status: "success" }))
