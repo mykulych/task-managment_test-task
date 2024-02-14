@@ -7,7 +7,7 @@ import { Todo } from "../../../types/todo";
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  selectedTodo: Todo;
+  selectedTodo: Todo | null;
 }
 
 export const UpdateTodoModal: React.FC<Props> = ({
@@ -20,6 +20,8 @@ export const UpdateTodoModal: React.FC<Props> = ({
   const errorToast = useToast({ status: "error" });
 
   const handleUpdateTodo = (data: FormValues) => {
+    if (!selectedTodo) return;
+    
     updateTodo({ id: selectedTodo._id, todo: data })
       .unwrap()
       .then(() => successToast({ title: "Todo updated" }))
@@ -37,8 +39,8 @@ export const UpdateTodoModal: React.FC<Props> = ({
           onSubmit={handleUpdateTodo}
           onClose={onClose}
           defaultData={{
-            title: selectedTodo.title || "",
-            description: selectedTodo.description || "",
+            title: selectedTodo?.title || "",
+            description: selectedTodo?.description || "",
           }}
         />
       </ModalContent>
